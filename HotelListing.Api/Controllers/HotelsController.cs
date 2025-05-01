@@ -8,12 +8,12 @@ namespace HotelListing.Api.Controllers
     [ApiController]
     public class HotelsController : ControllerBase
     {   
-        private static List<Hotel> _hotels = new List<Hotel>
-        {
-            new Hotel { Id = 1, Name = "Grand Plaza", Address = "123 Main St.", Rating = 4.5 },
-            new Hotel { Id = 2, Name = "Hilton", Address = "456 Main St.", Rating = 4.0 },
-            new Hotel { Id = 3, Name = "Marriott", Address = "789 Main St.", Rating = 3.5 }       
-        };
+        private static List<Hotel> _hotels =
+        [
+            new() { Id = 1, Name = "Grand Plaza", Address = "123 Main St.", Rating = 4.5 },
+            new() { Id = 2, Name = "Hilton", Address = "456 Main St.", Rating = 4.0 },
+            new() { Id = 3, Name = "Marriott", Address = "789 Main St.", Rating = 3.5 }
+        ];
         // GET: api/<HotelsController>
         [HttpGet]
         public ActionResult<IEnumerable<Hotel>> Get()
@@ -46,7 +46,7 @@ namespace HotelListing.Api.Controllers
             }
             _hotels.Add(newHotel);
             
-            // CreatedAtAction specifies status *201* (Created) response
+            // CreatedAtAction specifies *201* (Created) response
             return CreatedAtAction(nameof(Get), new { id = newHotel.Id }, newHotel);       
         }
 
