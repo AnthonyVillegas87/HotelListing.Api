@@ -8,5 +8,5 @@ public class Country
     
     public string ShortName { get; set; }
     
-    public IList<Hotel> Hotels { get; set; } = new List<Hotel>();
+    public IList<Hotel> Hotels { get; set; } = [];
 }
