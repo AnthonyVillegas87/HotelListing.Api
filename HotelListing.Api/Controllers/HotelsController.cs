@@ -18,6 +18,7 @@ namespace HotelListing.Api.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Hotel>> Get()
         {
+            // Return status *200* OK
             return Ok(_hotels);
         }
 
@@ -28,6 +29,7 @@ namespace HotelListing.Api.Controllers
             var hotel = _hotels.FirstOrDefault(h => h.Id == id);
             if (hotel == null)
             {
+                // Return status *404* Not Found
                 return NotFound();           
             }
             return Ok(hotel);
@@ -35,20 +37,51 @@ namespace HotelListing.Api.Controllers
 
         // POST api/<HotelsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<Hotel> Post([FromBody] Hotel newHotel)
         {
+            if (_hotels.Any(h => h.Id == newHotel.Id))
+            {
+                // Return status *400* BadRequest
+                return BadRequest("Hotel already exists.");
+            }
+            _hotels.Add(newHotel);
+            
+            // CreatedAtAction specifies status *201* (Created) response
+            return CreatedAtAction(nameof(Get), new { id = newHotel.Id }, newHotel);       
         }
 
         // PUT api/<HotelsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActionResult Put(int id, [FromBody] Hotel updatedHotel)
         {
+            var existingHotel = _hotels.FirstOrDefault(h => h.Id == id);
+            if (existingHotel == null)
+            {
+                // Return status *404* Not Found
+                return NotFound();
+            }
+            existingHotel.Name = updatedHotel.Name;
+            existingHotel.Address = updatedHotel.Address;
+            existingHotel.Rating = updatedHotel.Rating;  
+            
+            // Return status *204* No Content
+            return NoContent();       
         }
 
         // DELETE api/<HotelsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            var hotel = _hotels.FirstOrDefault(h => h.Id == id);
+            if (hotel == null)
+            {
+                // Return status *404* Not Found
+                return NotFound(new { message = "Hotel not found." });
+            }
+            _hotels.Remove(hotel);
+            
+            // Return status *204* No Content
+            return NoContent();      
         }
     }
 }
