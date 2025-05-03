@@ -2,6 +2,7 @@ using HotelListing.Api.Configurations;
 using HotelListing.Api.Contracts;
 using HotelListing.Api.Data;
 using HotelListing.Api.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,11 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
 
+builder.Services.AddIdentityCore<ApiUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<HotelListingDbContext>();
+    
+    
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
