@@ -28,4 +28,30 @@ public class AuthManager : IAuthManager
         }
         return result.Errors;
     }
+
+    public async Task<bool> Login(LoginDto loginDto)
+    {
+        bool isValidUser = false;
+        try
+        {
+            var _user = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (_user is null)
+            {
+                return default;
+            }
+ 
+            bool isValidCredentials = await _userManager.CheckPasswordAsync(_user, loginDto.Password);
+ 
+            if (!isValidCredentials)
+            {
+                return default;
+            }
+        }
+        catch (Exception)
+        {
+         
+        }
+        return isValidUser;
+      
+    }
 }
