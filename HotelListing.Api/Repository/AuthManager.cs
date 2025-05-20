@@ -16,17 +16,19 @@ public class AuthManager : IAuthManager
     private readonly IMapper _mapper;
     private readonly UserManager<ApiUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly ILogger _logger;
     private ApiUser _user;
     
     private const string _loginProvider = "HotelListingApi";
     private const string _refreshToken = "RefreshToken";
     
 
-    public AuthManager(IMapper mapper, UserManager<ApiUser> userManager, IConfiguration configuration)
+    public AuthManager(IMapper mapper, UserManager<ApiUser> userManager, IConfiguration configuration, ILogger<AuthManager> logger)
     {
         _mapper = mapper;
         _userManager = userManager;
         _configuration = configuration;
+        _logger = logger;
     }
     public async Task<IEnumerable<IdentityError>> Register(ApiUserDto userDto)
     {
@@ -43,15 +45,17 @@ public class AuthManager : IAuthManager
 
     public async Task<AuthResponseDto> Login(LoginDto loginDto)
     {
-            
+            _logger.LogInformation($"Login attempt for user: {loginDto.Email}");
            _user = await _userManager.FindByEmailAsync(loginDto.Email);
            bool isValidUser = await _userManager.CheckPasswordAsync(_user, loginDto.Password);
            if (_user == null || isValidUser == false)
            {
+               _logger.LogWarning($"Login attempt not found for user: {loginDto.Email}");
                return null;
            }
 
            var token = await GenerateToken();
+           _logger.LogInformation($"Token generation successful for user: {loginDto.Email} | Token: {token}");
            return new AuthResponseDto
            {
                Token = token,
